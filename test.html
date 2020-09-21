@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generar solicitud de servicio al departamento de sistemas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.0/css/bulma.min.css"
+      integrity="sha512-ADrqa2PY1TZtb/MoLZIZu/Z/LlPaWQeDMBV73EMwjGam43/JJ5fqW38Rq8LJOVGCDfrJeOMS3Q/wRUVzW5DkjQ=="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+    <style>
+      .signCanvas {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #f1f1f1;
+        padding-top: 25px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="signCanvas" id="firma1" style="border: 1px solid blue">
+      <div class="container">
+        <form>
+          <label>Firma:</label><br />
+          <div class="columns">
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Malo
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Regular
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Bueno
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Muy Bueno
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Excelente
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="jSignature.min.js"></script>
+    <script>
+      /* Iniciamos la zona de firma */
+      $(function () {
+        $("#firma1").jSignature();
+        $("#firma1").append(
+          '<button class="button is-success is-fullwidth" style="width: 88%; margin-left:45px;">Registrar Firma</button>'
+        );
+      });
+      $("#exportar").click(function () {
+        var datos = $("#firma1").jSignature("getData", "image");
+        var base64 = "data:" + datos.join(",");
+        console.log(base64);
+        $("#resultado").attr("src", base64);
+      });
+    </script>
+  </body>
+</html>

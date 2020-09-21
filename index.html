@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generar solicitud de servicio al departamento de sistemas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.0/css/bulma.min.css"
+      integrity="sha512-ADrqa2PY1TZtb/MoLZIZu/Z/LlPaWQeDMBV73EMwjGam43/JJ5fqW38Rq8LJOVGCDfrJeOMS3Q/wRUVzW5DkjQ=="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+    <style>
+      .signCanvas {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #333;
+      }
+    </style>
+  </head>
+  <body onload="getData();">
+    <div class="container">
+      <section class="hero is-link">
+        <div class="hero-body">
+          <div class="container">
+            <h1 class="title">Firma de solicitudes</h1>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="container" id="injectData"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
+    <script src="jSignature.min.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyAQ2g8RFgSafMilckqvyBhs_wZqrB27RPs",
+        authDomain: "eiao-5487e.firebaseapp.com",
+        databaseURL: "https://eiao-5487e.firebaseio.com",
+        projectId: "eiao-5487e",
+        storageBucket: "eiao-5487e.appspot.com",
+        messagingSenderId: "487600166298",
+        appId: "1:487600166298:web:e16485847bd3b03b691623",
+        measurementId: "G-KD328LTH8C",
+      };
+      firebase.initializeApp(firebaseConfig);
+      var db = firebase.firestore();
+
+      function getData() {
+        db.collection("solicitudesDeServicio")
+          .where("estado", "==", true)
+          .onSnapshot(function (querySnapshot) {
+            $("#injectData").empty();
+            querySnapshot.forEach(function (doc) {
+              $("#injectData").append(
+                '<div class="card" style="margin-top:10px;"><div class="card-content"><div class="media"><div class="media-content"><p class="title is-4">' +
+                  doc.data().nombreUsuario +
+                  '</p><p class="subtitle is-6">' +
+                  doc.data().correoUsuario +
+                  '</p></div></div><div class="content"><strong>' +
+                  doc.data().categoria +
+                  "</strong><br/>" +
+                  doc.data().problema +
+                  '<br><div style="margin-top:15px;font-size:12px;font-weight:bold;text-align:right;">' +
+                  doc.data().atendio +
+                  "  -   " +
+                  doc.data().fechaCierre +
+                  '</div><i><time style="text-align:right;" datetime="2016-1-1">' +
+                  doc.data().fecha +
+                  '</i></time></div><footer class="card-footer"><button href="#" class="button is-info is-fullwidth" onclick="signView();">Firmar</button></footer></div></div>'
+              );
+            });
+          });
+      }
+
+      function signView() {
+        document.getElementById("signReport").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
