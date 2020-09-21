@@ -23,7 +23,8 @@
         position: absolute;
         top: 0;
         left: 0;
-        background: #333;
+        background: #f1f1f1;
+        padding-top: 25px;
       }
     </style>
   </head>
@@ -37,12 +38,65 @@
         </div>
       </section>
     </div>
+    <div
+      class="signCanvas"
+      id="firma1"
+      style="border: 1px solid blue; display: none"
+    >
+      <div class="container">
+        <form>
+          <label>Firma:</label><br />
+          <div class="columns">
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Malo
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Regular
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Bueno
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Muy Bueno
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="evaluacion" />
+                  Excelente
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
     <div class="container" id="injectData"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="jSignature.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
-    <script src="jSignature.min.js"></script>
     <script>
       var firebaseConfig = {
         apiKey: "AIzaSyAQ2g8RFgSafMilckqvyBhs_wZqrB27RPs",
@@ -85,7 +139,12 @@
       }
 
       function signView() {
-        document.getElementById("signReport").style.display = "none";
+        document.getElementById("firma1").style.display = "block";
+        document.getElementById("injectData").style.display = "none";
+        $("#firma1").jSignature({ height: 200 });
+        $("#firma1").append(
+          '<button class="button is-success is-fullwidth" style="width: 88%; margin-left:45px;">Registrar Firma</button>'
+        );
       }
     </script>
   </body>
