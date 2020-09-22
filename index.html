@@ -30,7 +30,7 @@
   </head>
   <body onload="getData();">
     <div class="container">
-      <section class="hero is-link">
+      <section id="heroView" class="hero is-link">
         <div class="hero-body">
           <div class="container">
             <h1 class="title">Firma de solicitudes</h1>
@@ -38,58 +38,8 @@
         </div>
       </section>
     </div>
-    <div
-      class="signCanvas"
-      id="firma1"
-      style="border: 1px solid blue; display: none"
-    >
-      <div class="container">
-        <form>
-          <label>Firma:</label><br />
-          <div class="columns">
-            <div class="column">
-              <div class="control">
-                <label class="radio">
-                  <input type="radio" name="evaluacion" />
-                  Malo
-                </label>
-              </div>
-            </div>
-            <div class="column">
-              <div class="control">
-                <label class="radio">
-                  <input type="radio" name="evaluacion" />
-                  Regular
-                </label>
-              </div>
-            </div>
-            <div class="column">
-              <div class="control">
-                <label class="radio">
-                  <input type="radio" name="evaluacion" />
-                  Bueno
-                </label>
-              </div>
-            </div>
-            <div class="column">
-              <div class="control">
-                <label class="radio">
-                  <input type="radio" name="evaluacion" />
-                  Muy Bueno
-                </label>
-              </div>
-            </div>
-            <div class="column">
-              <div class="control">
-                <label class="radio">
-                  <input type="radio" name="evaluacion" />
-                  Excelente
-                </label>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
+    <div id="saodk" class="signCanvas" style="display: none">
+      <div id="mkas" class="container"></div>
     </div>
     <div class="container" id="injectData"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -111,9 +61,34 @@
       firebase.initializeApp(firebaseConfig);
       var db = firebase.firestore();
 
+      function signView(idReport) {
+        document.getElementById("heroView").style.display = "none";
+        document.getElementById("saodk").style.display = "block";
+        document.getElementById("injectData").style.display = "none";
+        console.log(idReport);
+        $("#mkas").append('<form id="inma"></form>');
+        $("#mkas").append('<div id="firma1"></div>');
+        $("#mkas").append('<div id="injectBtns"></div>');
+        $("#firma1").jSignature();
+        $("#inma").append(
+          '<label>Firma:</label><br /><div class="columns is-mobile"><div class="column"><div class="control"><label class="radio"><input type="radio" name="evaluacion" value="Malo" />Malo</label></div></div><div class="column"><div class="control"><label class="radio"><input type="radio" name="evaluacion" value="regular" />Regular</label></div></div><div class="column"><div class="control"><label class="radio"><input type="radio" name="evaluacion" value="bueno" />Bueno</label></div></div><div class="column"><div class="control"><label class="radio"><input type="radio" name="evaluacion" value="Muy Bueno" />Muy Bueno</label></div></div><div class="column"><div class="control"><label class="radio"><input type="radio" name="evaluacion" value="Excelente" />Excelente</label></div></div></div>'
+        );
+        $("#injectBtns").append(
+          '<button id="' +
+            idReport +
+            '" class="button is-success is-fullwidth" onclick="registerSign(this.id)">Registrar Firma</>'
+        );
+        $("#injectBtns").append(
+          '<button id="' +
+            idReport +
+            '" class="button is-danger is-fullwidth" onclick="cancel(this.id)">Cancelar</button>'
+        );
+      }
+
       function getData() {
         db.collection("solicitudesDeServicio")
           .where("estado", "==", true)
+          .where("firmada", "==", false)
           .onSnapshot(function (querySnapshot) {
             $("#injectData").empty();
             querySnapshot.forEach(function (doc) {
@@ -132,19 +107,42 @@
                   doc.data().fechaCierre +
                   '</div><i><time style="text-align:right;" datetime="2016-1-1">' +
                   doc.data().fecha +
-                  '</i></time></div><footer class="card-footer"><button href="#" class="button is-info is-fullwidth" onclick="signView();">Firmar</button></footer></div></div>'
+                  '</i></time></div><footer class="card-footer"><button class="button is-info is-fullwidth" id="' +
+                  doc.id +
+                  '" onclick="signView(this.id);">Firmar</button></footer></div></div>'
               );
             });
           });
       }
+      function cancel(kahj) {
+        document.getElementById("heroView").style.display = "block";
+        document.getElementById("saodk").style.display = "none";
+        document.getElementById("injectData").style.display = "block";
+        $("#mkas").empty();
+      }
+      function registerSign(idReport) {
+        var datos = $("#firma1").jSignature("getData", "image");
+        var base64 = "data:" + datos.join(",");
+        console.log(base64);
 
-      function signView() {
-        document.getElementById("firma1").style.display = "block";
-        document.getElementById("injectData").style.display = "none";
-        $("#firma1").jSignature({ height: 200 });
-        $("#firma1").append(
-          '<button class="button is-success is-fullwidth" style="width: 88%; margin-left:45px;">Registrar Firma</button>'
-        );
+        evaluacion = $('input:radio[name="evaluacion"]:checked').val();
+        if (!$("input[name='evaluacion']").is(":checked")) {
+          alert("Evalue el trabajo realizado.");
+        } else {
+          db.collection("solicitudesDeServicio")
+            .doc(idReport)
+            .update({
+              firma: base64,
+              evaluacion: evaluacion,
+              firmada: true,
+            })
+            .then(function () {
+              window.location.replace("index.html");
+            })
+            .catch(function (err) {
+              console.error("Error updating document: ", error);
+            });
+        }
       }
     </script>
   </body>
