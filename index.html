@@ -16,6 +16,10 @@
       integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <icon src="img/icon.png" />
     <icon src="img/mipmap-mdpi/icoin.png" platform="android" qualifier="mdpi" />
     <icon src="img/mipmap-hdpi/icoin.png" platform="android" qualifier="hdpi" />
@@ -51,16 +55,35 @@
       <section id="heroView" class="hero is-link">
         <div class="hero-body">
           <div class="container">
-            <h1 class="title">Firma de solicitudes</h1>
+            <h1 class="title">Administrador de solicitudes</h1>
           </div>
         </div>
       </section>
     </div>
+    <div class="tabs is-centered is-boxed" style="padding-top: 10px">
+      <ul>
+        <li id="firmarOption">
+          <a onclick="signOption();">
+            <span class="icon is-small"><i class="fa fa-check"></i></span>
+            <span>Firmar</span>
+          </a>
+        </li>
+        <li id="pendingOption" class="is-active">
+          <a onclick="pendingOption();">
+            <span class="icon is-small"
+              ><i class="fa fa-list" aria-hidden="true"></i
+            ></span>
+            <span>Solicitudes Pendientes</span>
+          </a>
+        </li>
+      </ul>
+    </div>
     <div id="saodk" class="signCanvas" style="display: none">
       <div id="mkas" class="container"></div>
     </div>
+    <div id="pendingReport"></div>
     <div class="container" id="injectData"></div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="jquery.min.js"></script>
     <script src="jSignature.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
@@ -103,6 +126,9 @@
         );
       }
 
+      function checkView(idReport){
+        
+      }
       function getData() {
         db.collection("solicitudesDeServicio")
           .where("estado", "==", true)
@@ -128,6 +154,28 @@
                   '</i></time></div><footer class="card-footer"><button class="button is-info is-fullwidth" id="' +
                   doc.id +
                   '" onclick="signView(this.id);">Firmar</button></footer></div></div>'
+              );
+            });
+          });
+        db.collection("solicitudesDeServicio")
+          .where("estado", "==", false)
+          .onSnapshot(function (querySnapshot) {
+            $("#pendingReport").empty();
+            querySnapshot.forEach(function (doc) {
+              $("#pendingReport").append(
+                '<div class="card" style="margin-top:10px;"><div class="card-content"><div class="media"><div class="media-content"><p class="title is-4">' +
+                  doc.data().nombreUsuario +
+                  '</p><p class="subtitle is-6">' +
+                  doc.data().correoUsuario +
+                  '</p></div></div><div class="content"><strong>' +
+                  doc.data().categoria +
+                  "</strong><br/>" +
+                  doc.data().problema +
+                  '<br><i><time style="text-align:right;" datetime="2016-1-1">' +
+                  doc.data().fecha +
+                  '</i></time></div><footer class="card-footer"><button class="button is-info is-fullwidth" id="' +
+                  doc.id +
+                  '" onclick="checkView(this.id);">Atender</button></footer></div></div>'
               );
             });
           });
@@ -161,6 +209,20 @@
               console.error("Error updating document: ", error);
             });
         }
+      }
+      function checkReport(idReport) {}
+  
+      function pendingOption() {
+        document.getElementById("injectData").style.display = "none";
+        document.getElementById("pendingReport").style.display = "block";
+        $("#firmarOption").removeClass("is-active");
+        $("#pendingOption").addClass("is-active");
+      }
+      function signOption() {
+        document.getElementById("injectData").style.display = "block";
+        document.getElementById("pendingReport").style.display = "none";
+        $("#pendingOption").removeClass("is-active");
+        $("#firmarOption").addClass("is-active");
       }
     </script>
   </body>
