@@ -83,6 +83,71 @@
     </div>
     <div id="pendingReport"></div>
     <div class="container" id="injectData"></div>
+
+    <div class="container" id="checkReportForm" style="display: none">
+      <div class="card" style="padding: 10px">
+        <form id="updateData">
+          <div class="content">
+            <article class="message is-warning">
+              <div class="message-header" id="catInject"></div>
+              <div class="message-body" id="problemInject"></div>
+            </article>
+            <div class="filed">
+              <div
+                class="control"
+                id="userFromReport"
+                style="margin-bottom: 10px"
+              ></div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <h4 class="subtitle">Atendio</h4>
+                <div class="select">
+                  <select name="responsable">
+                    <option>---Seleccione quien atendio---</option>
+                    <option>Asael Rios Martinez</option>
+                    <option>Francisco Roman Coronado Alonso</option>
+                    <option value="">Carlos Rafael Teviño Lopez</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label><b>Procedió</b></label>
+              <div class="control" id="no">
+                <label class="radio">
+                  <input type="radio" name="procedio" value="si" />
+                  Si
+                </label>
+                <label class="radio">
+                  <input type="radio" name="procedio" value="no" />
+                  No
+                </label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <textarea
+                  class="textarea is-medium"
+                  name="materialesUtilizados"
+                  placeholder="Materiales utilizados"
+                ></textarea>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <textarea
+                  class="textarea is-medium"
+                  name="trabajoRealizado"
+                  placeholder="Trabajo realizado"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="buttons" id="buttonsF"></div>
+        </form>
+      </div>
+    </div>
     <script src="jquery.min.js"></script>
     <script src="jSignature.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
@@ -106,7 +171,7 @@
         document.getElementById("heroView").style.display = "none";
         document.getElementById("saodk").style.display = "block";
         document.getElementById("injectData").style.display = "none";
-        console.log(idReport);
+        //console.log(idReport);
         $("#mkas").append('<form id="inma"></form>');
         $("#mkas").append('<div id="firma1"></div>');
         $("#mkas").append('<div id="injectBtns"></div>');
@@ -126,8 +191,58 @@
         );
       }
 
-      function checkView(idReport){
-        
+      function asopdk() {
+        document.getElementById("updateData").reset();
+        document.getElementById("checkReportForm").style.display = "none";
+      }
+      function checkView(idReport) {
+        document.getElementById("checkReportForm").style.display = "block";
+        document.getElementById("pendingReport").style.display = "none";
+        var infopro;
+        infopro = idReport.split("/");
+        $("#catInject").append(infopro[1] + " - " + infopro[2]);
+        $("#problemInject").append(infopro[3]);
+        $("#buttonsF").append(
+          '<button onclick="mfiw(this.id);" id="' +
+            infopro[0] +
+            '" class="button is-link is-fullwidth">Atender</button><br /><button onclick="asopdk();" class="button is-danger is-fullwidth">Cancelar</button>'
+        );
+      }
+
+      function mfiw(idReport) {
+        document
+          .getElementById("updateData")
+          .addEventListener("click", function (event) {
+            event.preventDefault();
+          });
+        procedio = $('input:radio[name="procedio"]:checked').val();
+        materiales = $("textarea[name*='materialesUtilizados']").val();
+        trabajo = $("textarea[name*='trabajoRealizado']").val();
+        responsable = $("select[name*='responsable']").val();
+
+        if (
+          materiales == "" ||
+          trabajo == "" ||
+          responsable == "---Seleccione quien atendio---"
+        ) {
+          alert("Favor de completar toda la informacion");
+        } else {
+          db.collection("solicitudesDeServicio")
+            .doc(idReport)
+            .update({
+              estado: true,
+              atendio: responsable,
+              materiales: materiales,
+              trabajo: trabajo,
+              procedio: procedio,
+            })
+            .then(function (docRef) {
+              window.location.replace("index.html");
+            })
+            .catch(function (error) {
+              console.error("Error adding document: ", error);
+            });
+        }
       }
       function getData() {
         db.collection("solicitudesDeServicio")
@@ -135,6 +250,7 @@
           .where("firmada", "==", false)
           .onSnapshot(function (querySnapshot) {
             $("#injectData").empty();
+            document.getElementById("injectData").style.display = "none";
             querySnapshot.forEach(function (doc) {
               $("#injectData").append(
                 '<div class="card" style="margin-top:10px;"><div class="card-content"><div class="media"><div class="media-content"><p class="title is-4">' +
@@ -175,6 +291,12 @@
                   doc.data().fecha +
                   '</i></time></div><footer class="card-footer"><button class="button is-info is-fullwidth" id="' +
                   doc.id +
+                  "/" +
+                  doc.data().nombreUsuario +
+                  "/" +
+                  doc.data().folio +
+                  "/" +
+                  doc.data().problema +
                   '" onclick="checkView(this.id);">Atender</button></footer></div></div>'
               );
             });
@@ -211,7 +333,7 @@
         }
       }
       function checkReport(idReport) {}
-  
+
       function pendingOption() {
         document.getElementById("injectData").style.display = "none";
         document.getElementById("pendingReport").style.display = "block";
