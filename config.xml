@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget android-versionCode="1" id="com.nsbasic.HelloWorld" ios-CFBundleVersion="1" version="1.0.0" xmlns="https://www.w3.org/ns/widgets" >
+    <name>Firmar Reportes</name>
+    <description />
+    <icon src="www/img/icon.png" />
+    <preference name="permissions" value="none" />
+    <plugin name="cordova-plugin-statusbar" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+    <plugin name="cordova-plugin-whitelist" />
+    
+    <platform name="ios">
+        <preference name="WKWebViewOnly" value="true" />
+            <feature name="CDVWKWebViewEngine">
+                <param name="ios-package" value="CDVWKWebViewEngine" />
+            </feature>
+        <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+    </platform>
+    <plugin name="cordova-plugin-inappbrowser"/>
+
+    <allow-navigation href="*" />
+    <access origin="*" />
+    <allow-intent href="*" />
+</widget>
